@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/search_fragment">
+    <fragment
+        android:id="@+id/search_fragment"
+        android:name="com.vironit.krasnovskaya_l23_p3.WallpaperSearchFragment"
+        android:label="fragment_wallpaper_search"
+        tools:layout="@layout/fragment_wallpaper_search" >
+        <action
+            android:id="@+id/action_search_fragment_to_favouritesFragment"
+            app:destination="@id/favourites_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favourites_fragment"
+        android:name="com.vironit.krasnovskaya_l23_p3.FavouritesFragment"
+        android:label="fragment_favourites"
+        tools:layout="@layout/fragment_favourites" >
+        <action
+            android:id="@+id/action_favouritesFragment_to_historyFragment"
+            app:destination="@id/history_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/history_fragment"
+        android:name="com.vironit.krasnovskaya_l23_p3.HistoryFragment"
+        android:label="fragment_history"
+        tools:layout="@layout/fragment_history" />
+</navigation>

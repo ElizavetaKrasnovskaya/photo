@@ -1,0 +1,4 @@
+rootProject.name = "Krasnovskaya_L23_P3"
+include ':app'
+include ':domain'
+include ':data'
