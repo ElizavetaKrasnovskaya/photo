@@ -1,4 +1,4 @@
-package com.vironit.krasnovskaya_l23_p3
+package com.vironit.krasnovskaya_l23_p3.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -8,8 +8,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.vironit.krasnovskaya_l23_p3.R
 import com.vironit.krasnovskaya_l23_p3.databinding.ActivityMainBinding
-import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,17 +28,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         supportActionBar?.hide()
         setContentView(binding.root)
-        try {
-            val navController = findNavController(R.id.main_fragment)
-            val appBarConfiguration = AppBarConfiguration(
-                setOf(
-                    R.id.search_fragment, R.id.history_fragment, R.id.favourites_fragment
-                )
+        val navController = findNavController(R.id.main_fragment)
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.search_fragment, R.id.history_fragment, R.id.favourites_fragment
             )
-            setupActionBarWithNavController(navController, appBarConfiguration)
-            binding.bottomBar.setupWithNavController(navController)
-        } catch (a: Exception){
-            print(a.printStackTrace())
-        }
+        )
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        binding.bottomBar.setupWithNavController(navController)
     }
 }

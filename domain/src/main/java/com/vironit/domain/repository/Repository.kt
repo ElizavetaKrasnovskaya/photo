@@ -1,12 +1,12 @@
 package com.vironit.domain.repository
 
+import com.vironit.domain.model.Photo
+import retrofit2.Call
+
 interface Repository {
-
-    fun getAllData()
-
-    fun getDataById()
-
-    suspend fun insert()
-
-    suspend fun deleteDataById(id: Long)
+    fun getAllData(
+        page: Int,
+        pageLimit: Int,
+        order: String
+    ): Call<MutableList<Photo>>
 }

@@ -1,17 +1,19 @@
-package com.vironit.krasnovskaya_l23_p3
+package com.vironit.krasnovskaya_l23_p3.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.vironit.krasnovskaya_l23_p3.R
 
-class DetailsScreenFragment : Fragment() {
+class HistoryFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_details_screen, container, false)
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_history, container, false)
     }
 }

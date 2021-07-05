@@ -6,7 +6,7 @@
     app:startDestination="@id/search_fragment">
     <fragment
         android:id="@+id/search_fragment"
-        android:name="com.vironit.krasnovskaya_l23_p3.WallpaperSearchFragment"
+        android:name="com.vironit.krasnovskaya_l23_p3.ui.WallpaperSearchFragment"
         android:label="fragment_wallpaper_search"
         tools:layout="@layout/fragment_wallpaper_search" >
         <action
@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/history_fragment"
-        android:name="com.vironit.krasnovskaya_l23_p3.HistoryFragment"
+        android:name="com.vironit.krasnovskaya_l23_p3.ui.HistoryFragment"
         android:label="fragment_history"
         tools:layout="@layout/fragment_history" />
 </navigation>
