@@ -1,4 +1,4 @@
-package com.vironit.data.model
+package com.vironit.domain.model
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
