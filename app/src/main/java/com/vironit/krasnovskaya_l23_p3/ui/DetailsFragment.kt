@@ -13,6 +13,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore.Images
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -25,8 +28,6 @@ import com.bumptech.glide.request.transition.Transition
 import com.vironit.krasnovskaya_l23_p3.R
 import com.vironit.krasnovskaya_l23_p3.databinding.FragmentDetailsBinding
 import com.vironit.krasnovskaya_l23_p3.model.PhotoEntity
-import kotlinx.android.synthetic.main.fragment_details.*
-import kotlinx.android.synthetic.main.fragment_wallpaper_search.*
 
 
 class DetailsFragment : Fragment(R.layout.fragment_details) {
@@ -128,6 +129,19 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             binding.ll1.isVisible = false
             binding.ll2.isVisible = false
             binding.ll3.isVisible = false
+        }
+        binding.resize.setImageResource(R.drawable.ic_fullscreen)
+        binding.resize.tag = R.drawable.ic_fullscreen
+        binding.resize.setOnClickListener {
+            if (binding.resize.tag == R.drawable.ic_fullscreen) {
+                (activity as AppCompatActivity).supportActionBar?.hide()
+                binding.ivPhoto.scaleType = ImageView.ScaleType.FIT_XY
+                requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                (activity as AppCompatActivity).supportActionBar?.hide()
+            } else{
+
+            }
         }
     }
 

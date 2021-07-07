@@ -78,12 +78,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:visibility="gone"
-        tools:visibility="visible"
         android:paddingBottom="20dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/ll2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible">
 
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="25dp"
@@ -106,12 +106,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:visibility="gone"
-        tools:visibility="visible"
         android:paddingBottom="20dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/ll3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible">
 
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="25dp"
@@ -132,12 +132,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:visibility="gone"
-        tools:visibility="visible"
         android:paddingBottom="20dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/iv_photo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible">
 
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="25dp"
@@ -152,5 +152,22 @@
             android:text="Сохранить в избранное"
             android:textColor="@color/textColor" />
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/resize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
+        android:elevation="10dp"
+        android:backgroundTint="@color/white"
+        android:clickable="true"
+        android:scaleType="center"
+        app:borderWidth="0dp"
+        android:src="@drawable/ic_fullscreen"
+        app:fabCustomSize="45dp"
+        app:fabSize="auto"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

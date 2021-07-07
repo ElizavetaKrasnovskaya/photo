@@ -26,7 +26,6 @@ class WallpaperSearchFragment : Fragment(), UnsplashPhotoAdapter.OnItemClickList
     private var _binding: FragmentWallpaperSearchBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModels<GalleryViewModel>()
-    private var isGrid2: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,14 +41,12 @@ class WallpaperSearchFragment : Fragment(), UnsplashPhotoAdapter.OnItemClickList
 
     private fun changeManager() {
         binding.btnManager.setOnClickListener {
-            if (isGrid2) {
+            if (binding.btnManager.background.constantState == resources.getDrawable(R.drawable.ic_grid2).constantState) {
                 binding.btnManager.background = resources.getDrawable(R.drawable.ic_grid3)
                 binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
-                isGrid2 = false
             } else {
                 binding.btnManager.background = resources.getDrawable(R.drawable.ic_grid2)
                 binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-                isGrid2 = true
             }
         }
 
