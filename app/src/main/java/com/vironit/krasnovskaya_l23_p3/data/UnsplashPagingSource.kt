@@ -2,6 +2,7 @@ package com.vironit.krasnovskaya_l23_p3.data
 
 import androidx.paging.PagingSource
 import com.vironit.krasnovskaya_l23_p3.api.UnsplashApi
+import com.vironit.krasnovskaya_l23_p3.model.PhotoEntity
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -10,9 +11,9 @@ private const val UNSPLASH_STARTING_PAGE_INDEX = 1
 class UnsplashPagingSource(
     private val unsplashApi: UnsplashApi,
     private val query: String
-) : PagingSource<Int, UnsplashPhoto>() {
+) : PagingSource<Int, PhotoEntity>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UnsplashPhoto> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PhotoEntity> {
         val position = params.key ?: UNSPLASH_STARTING_PAGE_INDEX
 
         return try {

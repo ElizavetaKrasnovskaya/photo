@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
+            app:queryBackground="@android:color/transparent"
             android:theme="@style/SearchViewStyle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

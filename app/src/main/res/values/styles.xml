@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Button.Grey" parent="ThemeOverlay.AppCompat">
         <item name="colorAccent">@color/iconColor</item>
     </style>
@@ -13,7 +14,7 @@
         <item name="searchHintIcon">@null</item>
         <item name="closeIcon">@android:color/transparent</item>
         <!-- The hint text that appears when the user has not typed anything -->
-<!--        <item name="queryHint">@string/search_hint</item>-->
+        <!--        <item name="queryHint">@string/search_hint</item>-->
     </style>
 
     <style name="RoundedSquare">

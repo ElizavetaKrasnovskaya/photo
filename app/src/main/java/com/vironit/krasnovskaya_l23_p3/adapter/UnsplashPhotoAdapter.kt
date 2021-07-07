@@ -8,11 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.vironit.krasnovskaya_l23_p3.R
-import com.vironit.krasnovskaya_l23_p3.data.UnsplashPhoto
 import com.vironit.krasnovskaya_l23_p3.databinding.RecyclerviewItemBinding
+import com.vironit.krasnovskaya_l23_p3.model.PhotoEntity
 
 class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
-    PagingDataAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
+    PagingDataAdapter<PhotoEntity, UnsplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         val binding =
@@ -44,10 +44,10 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
             }
         }
 
-        fun bind(photo: UnsplashPhoto) {
+        fun bind(photo: PhotoEntity) {
             binding.apply {
                 Glide.with(itemView)
-                    .load(photo.urls.regular)
+                    .load(photo.urlEntity.regular)
                     .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_error)
@@ -57,15 +57,15 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
     }
 
     interface OnItemClickListener {
-        fun onItemClick(photo: UnsplashPhoto)
+        fun onItemClick(photo: PhotoEntity)
     }
 
     companion object {
-        private val PHOTO_COMPARATOR = object : DiffUtil.ItemCallback<UnsplashPhoto>() {
-            override fun areItemsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto) =
+        private val PHOTO_COMPARATOR = object : DiffUtil.ItemCallback<PhotoEntity>() {
+            override fun areItemsTheSame(oldItem: PhotoEntity, newItem: PhotoEntity) =
                 oldItem.id == newItem.id
 
-            override fun areContentsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto) =
+            override fun areContentsTheSame(oldItem: PhotoEntity, newItem: PhotoEntity) =
                 oldItem == newItem
         }
     }
