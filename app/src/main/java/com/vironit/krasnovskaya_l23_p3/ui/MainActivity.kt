@@ -36,23 +36,23 @@ class MainActivity : AppCompatActivity() {
                 R.id.search_fragment, R.id.history_fragment, R.id.favourites_fragment
             )
         )
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.search_fragment -> showBottomNav()
-                else -> hideBottomNav()
-            }
-        }
+//        navController.addOnDestinationChangedListener { _, destination, _ ->
+//            when (destination.id) {
+//                R.id.search_fragment -> showBottomNav()
+//                R.id.search_fragment -> showBottomNav()
+//                else -> hideBottomNav()
+//            }
+//        }
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.bottomBar.setupWithNavController(navController)
     }
 
-    private fun showBottomNav() {
-        binding.bottomBar.visibility = View.VISIBLE
-
-    }
-
-    private fun hideBottomNav() {
-        binding.bottomBar.visibility = View.GONE
-
-    }
+//    private fun showBottomNav() {
+//        binding.bottomBar.visibility = View.VISIBLE
+//
+//    }
+//
+//    private fun hideBottomNav() {
+//        binding.bottomBar.visibility = View.GONE
+//    }
 }

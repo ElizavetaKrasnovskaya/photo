@@ -18,5 +18,6 @@ data class PhotoEntity(
     @SerializedName("user") val userEntity: @RawValue UserEntity,
     @SerializedName("likes") val likes: String,
     @SerializedName("sponsorship") val sponsorshipEntity: @RawValue SponsorshipEntity,
-    @SerializedName("exif") val exifEntity: @RawValue ExifEntity
+    @SerializedName("exif") val exifEntity: @RawValue ExifEntity,
+    @SerializedName("created_at") val date: String
 ) : Parcelable

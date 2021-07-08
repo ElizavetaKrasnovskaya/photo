@@ -12,10 +12,8 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore.Images
+import android.view.LayoutInflater
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -25,9 +23,14 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.vironit.krasnovskaya_l23_p3.R
 import com.vironit.krasnovskaya_l23_p3.databinding.FragmentDetailsBinding
+import com.vironit.krasnovskaya_l23_p3.databinding.UserInfoViewBinding
 import com.vironit.krasnovskaya_l23_p3.model.PhotoEntity
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class DetailsFragment : Fragment(R.layout.fragment_details) {
@@ -40,6 +43,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentDetailsBinding.bind(view)
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_bar).isVisible = false
         binding.apply {
             photo = args.photo
             (activity as AppCompatActivity).supportActionBar?.show()
@@ -134,15 +138,77 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         binding.resize.tag = R.drawable.ic_fullscreen
         binding.resize.setOnClickListener {
             if (binding.resize.tag == R.drawable.ic_fullscreen) {
+                binding.constraintLayout2.isVisible = false
+                binding.resize.setImageResource(R.drawable.ic_fullscreen_exit)
+                binding.resize.tag = R.drawable.ic_fullscreen_exit
+                val decorView: View = requireActivity().window.decorView
+                val uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
+                decorView.systemUiVisibility = uiOptions
+                requireActivity().window.statusBarColor = Color.parseColor("#80000000")
                 (activity as AppCompatActivity).supportActionBar?.hide()
-                binding.ivPhoto.scaleType = ImageView.ScaleType.FIT_XY
-                requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN)
-                (activity as AppCompatActivity).supportActionBar?.hide()
-            } else{
-
+            } else {
+                binding.constraintLayout2.isVisible = true
+                binding.resize.setImageResource(R.drawable.ic_fullscreen)
+                binding.resize.tag = R.drawable.ic_fullscreen
+                val decorView: View = requireActivity().window.decorView
+                val uiOptions = View.SYSTEM_UI_FLAG_VISIBLE
+                decorView.systemUiVisibility = uiOptions
+                requireActivity().window.statusBarColor = Color.TRANSPARENT
+                (activity as AppCompatActivity).supportActionBar?.show()
             }
         }
+        binding.info.setOnClickListener {
+            val infoAboutAuthorLayout = LayoutInflater.from(requireContext())
+                .inflate(R.layout.user_info_view, binding.mainConstraint, false)
+            val layoutBinding = UserInfoViewBinding.bind(infoAboutAuthorLayout)
+            setInfo(layoutBinding)
+            binding.prevContent.addView(infoAboutAuthorLayout)
+            binding.prevContent.background = resources.getDrawable(R.drawable.rounded)
+            (activity as AppCompatActivity).supportActionBar?.hide()
+            binding.constraintLayout2.isVisible = false
+            binding.resize.isVisible = false
+            binding.back.isVisible = true
+        }
+    }
+
+    private fun setInfo(layoutBinding: UserInfoViewBinding) {
+        layoutBinding.userName.text = photo.userEntity.name
+        if (!photo.userEntity.inst.isNullOrBlank()) {
+            layoutBinding.inst.text = photo.userEntity.inst
+        } else {
+            layoutBinding.inst.isVisible = false
+            layoutBinding.instIcon.isVisible = false
+        }
+        if (!photo.userEntity.twitter.isNullOrBlank()) {
+            layoutBinding.tw.text = photo.userEntity.twitter
+            layoutBinding.userNick.text = photo.userEntity.twitter
+        } else {
+            layoutBinding.userNick.isVisible = false
+            layoutBinding.tw.isVisible = false
+            layoutBinding.twIcon.isVisible = false
+        }
+        Glide.with(this@DetailsFragment)
+            .asBitmap()
+            .load(photo.userEntity.profileImageEntity.medium)
+            .error(R.drawable.ic_error)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: Transition<in Bitmap>?
+                ) {
+                    layoutBinding.userImage.setImageBitmap(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                }
+            })
+        layoutBinding.imgDescription.text = photo.description
+        val jud: Date = SimpleDateFormat("yyyy-MM-dd").parse(photo.date)
+        val date: String =
+            DateFormat.getDateInstance(SimpleDateFormat.LONG, Locale("ru")).format(jud)
+        layoutBinding.date.text = date
+        layoutBinding.color.text = photo.color
+        layoutBinding.size.text = "Px: ${photo.width} x ${photo.height}"
     }
 
     private fun shareContent() {
@@ -179,6 +245,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         startActivity(Intent.createChooser(intent, "Set as"))
     }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
