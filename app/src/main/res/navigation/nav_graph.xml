@@ -3,7 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/search_fragment">
+    app:startDestination="@id/splash_screen_fragment">
+    <fragment
+        android:id="@+id/splash_screen_fragment"
+        android:name="com.vironit.krasnovskaya_l23_p3.ui.SplashScreenFragment"
+        android:label="SplashScreenFragment"
+        tools:layout="@layout/fragment_splash_screen">
+        <action
+            android:id="@+id/action_splashScreenFragment_to_search_fragment"
+            app:destination="@id/search_fragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out" />
+    </fragment>
     <fragment
         android:id="@+id/search_fragment"
         android:name="com.vironit.krasnovskaya_l23_p3.ui.WallpaperSearchFragment"
@@ -11,25 +22,52 @@
         tools:layout="@layout/fragment_wallpaper_search">
         <action
             android:id="@+id/action_search_fragment_to_favouritesFragment"
-            app:destination="@id/favourites_fragment" />
+            app:destination="@id/favourites_fragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out" />
         <action
             android:id="@+id/action_search_fragment_to_detailsFragment"
-            app:destination="@id/detailsFragment" />
+            app:destination="@id/detailsFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out" />
+        <action
+            android:id="@+id/action_search_fragment_to_history_fragment"
+            app:destination="@id/history_fragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out" />
     </fragment>
     <fragment
         android:id="@+id/favourites_fragment"
-        android:name="com.vironit.krasnovskaya_l23_p3.FavouritesFragment"
+        android:name="com.vironit.krasnovskaya_l23_p3.ui.FavouritesFragment"
         android:label="fragment_favourites"
         tools:layout="@layout/fragment_favourites">
         <action
             android:id="@+id/action_favouritesFragment_to_historyFragment"
-            app:destination="@id/history_fragment" />
+            app:destination="@id/history_fragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out" />
+        <action
+            android:id="@+id/action_favourites_fragment_to_search_fragment"
+            app:destination="@id/search_fragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out" />
     </fragment>
     <fragment
         android:id="@+id/history_fragment"
         android:name="com.vironit.krasnovskaya_l23_p3.ui.HistoryFragment"
         android:label="fragment_history"
-        tools:layout="@layout/fragment_history" />
+        tools:layout="@layout/fragment_history" >
+        <action
+            android:id="@+id/action_history_fragment_to_favourites_fragment"
+            app:destination="@id/favourites_fragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out" />
+        <action
+            android:id="@+id/action_history_fragment_to_search_fragment"
+            app:destination="@id/search_fragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out" />
+    </fragment>
     <fragment
         android:id="@+id/detailsFragment"
         android:name="com.vironit.krasnovskaya_l23_p3.ui.DetailsFragment"
@@ -37,6 +75,13 @@
         tools:layout="@layout/fragment_details">
         <argument
             android:name="photo"
-            app:argType="com.vironit.data.model.PhotoEntity" />
+            app:argType="com.vironit.domain.model.unsplash.Photo"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out" />
+        <action
+            android:id="@+id/action_detailsFragment_to_search_fragment"
+            app:destination="@id/search_fragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out" />
     </fragment>
 </navigation>

@@ -10,11 +10,13 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore.Images
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -24,7 +26,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.vironit.domain.model.Photo
+import com.vironit.domain.model.unsplash.Photo
 import com.vironit.krasnovskaya_l23_p3.R
 import com.vironit.krasnovskaya_l23_p3.databinding.FragmentDetailsBinding
 import com.vironit.krasnovskaya_l23_p3.databinding.UserInfoViewBinding
@@ -39,6 +41,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private lateinit var binding: FragmentDetailsBinding
     private lateinit var photo: Photo
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -55,7 +58,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             (activity as AppCompatActivity).supportActionBar?.title = photo.description
             Glide.with(this@DetailsFragment)
                 .asBitmap()
-                .load(photo.url.regular)
+                .load(photo.url?.regular)
                 .error(R.drawable.ic_error)
                 .into(object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(
@@ -166,16 +169,16 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     }
 
     private fun setInfo(layoutBinding: UserInfoViewBinding) {
-        layoutBinding.userName.text = photo.user.name
-        if (!photo.user.inst.isNullOrBlank()) {
-            layoutBinding.inst.text = photo.user.inst
+        layoutBinding.userName.text = photo.user?.name
+        if (!photo.user?.inst.isNullOrBlank()) {
+            layoutBinding.inst.text = photo.user?.inst
         } else {
             layoutBinding.inst.isVisible = false
             layoutBinding.instIcon.isVisible = false
         }
-        if (!photo.user.twitter.isNullOrBlank()) {
-            layoutBinding.tw.text = photo.user.twitter
-            layoutBinding.userNick.text = photo.user.twitter
+        if (!photo.user?.twitter.isNullOrBlank()) {
+            layoutBinding.tw.text = photo.user?.twitter
+            layoutBinding.userNick.text = photo.user?.twitter
         } else {
             layoutBinding.userNick.isVisible = false
             layoutBinding.tw.isVisible = false
@@ -183,7 +186,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         }
         Glide.with(this@DetailsFragment)
             .asBitmap()
-            .load(photo.user.profileImage.medium)
+            .load(photo.user?.profileImage?.medium)
             .error(R.drawable.ic_error)
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(

@@ -7,19 +7,20 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.vironit.data.repository.UnsplashRepository
+import com.vironit.domain.interactor.Interactor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class GalleryViewModel @Inject constructor(
-    private val repository: UnsplashRepository,
+    private val interactor: Interactor,
     @Assisted state: SavedStateHandle
 ) : ViewModel() {
 
     private val currentQuery = state.getLiveData(CURRENT_QUERY, DEFAULT_QUERY)
 
     val photos = currentQuery.switchMap { queryString ->
-        repository.getSearchResults(queryString).cachedIn(viewModelScope)
+        interactor.getSearchResults(queryString).cachedIn(viewModelScope)
     }
 
     fun searchPhotos(query: String) {

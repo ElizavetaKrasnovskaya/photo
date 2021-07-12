@@ -7,14 +7,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.vironit.data.model.PhotoEntity
-import com.vironit.domain.model.Photo
+import com.vironit.domain.model.unsplash.Photo
 import com.vironit.krasnovskaya_l23_p3.R
 import com.vironit.krasnovskaya_l23_p3.databinding.RecyclerviewItemBinding
 
 
 class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
-    PagingDataAdapter<PhotoEntity, UnsplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
+    PagingDataAdapter<Photo, UnsplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         val binding =
@@ -49,7 +48,7 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
         fun bind(photo: Photo) {
             binding.apply {
                 Glide.with(itemView)
-                    .load(photo.url.regular)
+                    .load(photo.url?.regular)
                     .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_error)
@@ -59,15 +58,15 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
     }
 
     interface OnItemClickListener {
-        fun onItemClick(photo: PhotoEntity)
+        fun onItemClick(photo: Photo)
     }
 
     companion object {
-        private val PHOTO_COMPARATOR = object : DiffUtil.ItemCallback<PhotoEntity>() {
-            override fun areItemsTheSame(oldItem: PhotoEntity, newItem: PhotoEntity) =
+        private val PHOTO_COMPARATOR = object : DiffUtil.ItemCallback<Photo>() {
+            override fun areItemsTheSame(oldItem: Photo, newItem: Photo) =
                 oldItem.id == newItem.id
 
-            override fun areContentsTheSame(oldItem: PhotoEntity, newItem: PhotoEntity) =
+            override fun areContentsTheSame(oldItem: Photo, newItem: Photo) =
                 oldItem.width == newItem.width && oldItem.height == newItem.height &&
                         oldItem.color == newItem.color && oldItem.description == newItem.description &&
                         oldItem.date == newItem.date
