@@ -1,8 +1,8 @@
-package com.vironit.krasnovskaya_l23_p3.data
+package com.vironit.data.repository
 
 import androidx.paging.PagingSource
-import com.vironit.krasnovskaya_l23_p3.api.UnsplashApi
-import com.vironit.krasnovskaya_l23_p3.model.PhotoEntity
+import com.vironit.data.model.PhotoEntity
+import com.vironit.domain.model.Photo
 import retrofit2.HttpException
 import java.io.IOException
 

@@ -24,10 +24,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.vironit.domain.model.Photo
 import com.vironit.krasnovskaya_l23_p3.R
 import com.vironit.krasnovskaya_l23_p3.databinding.FragmentDetailsBinding
 import com.vironit.krasnovskaya_l23_p3.databinding.UserInfoViewBinding
-import com.vironit.krasnovskaya_l23_p3.model.PhotoEntity
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,7 +37,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
     private val args by navArgs<DetailsFragmentArgs>()
     private lateinit var binding: FragmentDetailsBinding
-    private lateinit var photo: PhotoEntity
+    private lateinit var photo: Photo
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,7 +55,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             (activity as AppCompatActivity).supportActionBar?.title = photo.description
             Glide.with(this@DetailsFragment)
                 .asBitmap()
-                .load(photo.urlEntity.regular)
+                .load(photo.url.regular)
                 .error(R.drawable.ic_error)
                 .into(object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(
@@ -141,18 +141,12 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                 binding.constraintLayout2.isVisible = false
                 binding.resize.setImageResource(R.drawable.ic_fullscreen_exit)
                 binding.resize.tag = R.drawable.ic_fullscreen_exit
-                val decorView: View = requireActivity().window.decorView
-                val uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
-                decorView.systemUiVisibility = uiOptions
-                requireActivity().window.statusBarColor = Color.parseColor("#80000000")
+                requireActivity().window.statusBarColor = Color.parseColor("#ff000000")
                 (activity as AppCompatActivity).supportActionBar?.hide()
             } else {
                 binding.constraintLayout2.isVisible = true
                 binding.resize.setImageResource(R.drawable.ic_fullscreen)
                 binding.resize.tag = R.drawable.ic_fullscreen
-                val decorView: View = requireActivity().window.decorView
-                val uiOptions = View.SYSTEM_UI_FLAG_VISIBLE
-                decorView.systemUiVisibility = uiOptions
                 requireActivity().window.statusBarColor = Color.TRANSPARENT
                 (activity as AppCompatActivity).supportActionBar?.show()
             }
@@ -172,16 +166,16 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     }
 
     private fun setInfo(layoutBinding: UserInfoViewBinding) {
-        layoutBinding.userName.text = photo.userEntity.name
-        if (!photo.userEntity.inst.isNullOrBlank()) {
-            layoutBinding.inst.text = photo.userEntity.inst
+        layoutBinding.userName.text = photo.user.name
+        if (!photo.user.inst.isNullOrBlank()) {
+            layoutBinding.inst.text = photo.user.inst
         } else {
             layoutBinding.inst.isVisible = false
             layoutBinding.instIcon.isVisible = false
         }
-        if (!photo.userEntity.twitter.isNullOrBlank()) {
-            layoutBinding.tw.text = photo.userEntity.twitter
-            layoutBinding.userNick.text = photo.userEntity.twitter
+        if (!photo.user.twitter.isNullOrBlank()) {
+            layoutBinding.tw.text = photo.user.twitter
+            layoutBinding.userNick.text = photo.user.twitter
         } else {
             layoutBinding.userNick.isVisible = false
             layoutBinding.tw.isVisible = false
@@ -189,7 +183,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         }
         Glide.with(this@DetailsFragment)
             .asBitmap()
-            .load(photo.userEntity.profileImageEntity.medium)
+            .load(photo.user.profileImage.medium)
             .error(R.drawable.ic_error)
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(

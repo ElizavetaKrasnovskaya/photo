@@ -25,8 +25,8 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
             window.statusBarColor = resources.getColor(R.color.blue)
         }
         Handler().postDelayed(Runnable {
-            val action = SplashScreenFragmentDirections.actionSplashScreenFragmentToWallpaperSearchFragment()
-            Navigation.findNavController(requireView()).navigate(action)
+//            val action = SplashScreenFragmentDirections.actionSplashScreenFragmentToWallpaperSearchFragment()
+//            Navigation.findNavController(requireView()).navigate(action)
         }, 3000)
         return inflater.inflate(R.layout.fragment_splash_screen, container, false)
     }

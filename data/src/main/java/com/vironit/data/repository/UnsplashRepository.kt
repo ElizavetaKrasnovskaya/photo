@@ -1,16 +1,17 @@
-package com.vironit.krasnovskaya_l23_p3.data
+package com.vironit.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.liveData
-import com.vironit.krasnovskaya_l23_p3.api.UnsplashApi
+import com.vironit.data.model.PhotoEntity
+import com.vironit.domain.repository.Repository
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UnsplashRepository @Inject constructor(private val unsplashApi: UnsplashApi) {
+class UnsplashRepository @Inject constructor(private val unsplashApi: UnsplashApi): Repository<PhotoEntity> {
 
-    fun getSearchResults(query: String) =
+    override fun getSearchResults(query: String) =
         Pager(
             config = PagingConfig(
                 pageSize = 20,

@@ -1,10 +1,9 @@
 package com.vironit.domain.repository
 
-//
-//interface Repository {
-//    fun getAllData(
-//        page: Int,
-//        pageLimit: Int,
-//        order: String
-//    ): Call<MutableList<Photo>>
-//}
+import androidx.lifecycle.LiveData
+import androidx.paging.PagingData
+
+
+interface Repository<T : Any> {
+    fun getSearchResults(query: String): LiveData<PagingData<T>>
+}

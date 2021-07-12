@@ -1,16 +1,13 @@
 package com.vironit.domain.interactor
 
-//import com.vironit.domain.model.Photo
-//import com.vironit.domain.use_cases.UseCase
-//import retrofit2.Call
-//import javax.inject.Inject
-//
-//class Interactor @Inject constructor(private val useCase: UseCase) {
-//    fun getAllData(
-//        page: Int,
-//        pageLimit: Int,
-//        order: String
-//    ): Call<MutableList<Photo>> {
-//        return useCase.getAllData(page, pageLimit, order)
-//    }
-//}
+import androidx.lifecycle.LiveData
+import androidx.paging.PagingData
+import com.vironit.domain.model.Photo
+import com.vironit.domain.use_cases.UseCase
+import javax.inject.Inject
+
+class Interactor<T: Any> @Inject constructor(private val useCase: UseCase<T>) {
+    fun getSearchResults(query: String): LiveData<PagingData<T>> {
+        return useCase.getSearchResults(query)
+    }
+}

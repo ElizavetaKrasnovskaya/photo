@@ -1,4 +1,4 @@
-package com.vironit.krasnovskaya_l23_p3.api
+package com.vironit.data.repository
 
 import retrofit2.http.GET
 import retrofit2.http.Headers

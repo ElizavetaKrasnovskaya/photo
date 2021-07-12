@@ -7,9 +7,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.vironit.data.model.PhotoEntity
+import com.vironit.domain.model.Photo
 import com.vironit.krasnovskaya_l23_p3.R
 import com.vironit.krasnovskaya_l23_p3.databinding.RecyclerviewItemBinding
-import com.vironit.krasnovskaya_l23_p3.model.PhotoEntity
+
 
 class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
     PagingDataAdapter<PhotoEntity, UnsplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
@@ -44,10 +46,10 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
             }
         }
 
-        fun bind(photo: PhotoEntity) {
+        fun bind(photo: Photo) {
             binding.apply {
                 Glide.with(itemView)
-                    .load(photo.urlEntity.regular)
+                    .load(photo.url.regular)
                     .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_error)
@@ -66,7 +68,9 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
                 oldItem.id == newItem.id
 
             override fun areContentsTheSame(oldItem: PhotoEntity, newItem: PhotoEntity) =
-                oldItem == newItem
+                oldItem.width == newItem.width && oldItem.height == newItem.height &&
+                        oldItem.color == newItem.color && oldItem.description == newItem.description &&
+                        oldItem.date == newItem.date
         }
     }
 }

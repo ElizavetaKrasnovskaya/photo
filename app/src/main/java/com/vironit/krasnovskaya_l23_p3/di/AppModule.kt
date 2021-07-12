@@ -1,6 +1,6 @@
 package com.vironit.krasnovskaya_l23_p3.di
 
-import com.vironit.krasnovskaya_l23_p3.api.UnsplashApi
+import com.vironit.data.repository.UnsplashApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

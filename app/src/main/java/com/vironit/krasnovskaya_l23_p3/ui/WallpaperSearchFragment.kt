@@ -13,10 +13,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
+import com.vironit.data.model.PhotoEntity
+import com.vironit.domain.model.Photo
 import com.vironit.krasnovskaya_l23_p3.R
 import com.vironit.krasnovskaya_l23_p3.adapter.UnsplashPhotoAdapter
 import com.vironit.krasnovskaya_l23_p3.databinding.FragmentWallpaperSearchBinding
-import com.vironit.krasnovskaya_l23_p3.model.PhotoEntity
 import dagger.hilt.android.AndroidEntryPoint
 
 
