@@ -4,15 +4,13 @@ import android.Manifest
 import android.app.WallpaperManager
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore.Images
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
@@ -21,15 +19,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.vironit.domain.model.unsplash.Photo
+import com.vironit.data.retrofit.model.UnsplashPhoto
 import com.vironit.krasnovskaya_l23_p3.R
+import com.vironit.krasnovskaya_l23_p3.common.util.ImageUtils
 import com.vironit.krasnovskaya_l23_p3.databinding.FragmentDetailsBinding
 import com.vironit.krasnovskaya_l23_p3.databinding.UserInfoViewBinding
+import com.vironit.krasnovskaya_l23_p3.viewmodel.PhotoDetailsViewModel
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,104 +37,196 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
     private val args by navArgs<DetailsFragmentArgs>()
     private lateinit var binding: FragmentDetailsBinding
-    private lateinit var photo: Photo
+    private lateinit var viewModel: PhotoDetailsViewModel
+    private var unsplashPhoto: UnsplashPhoto? = null
+    private lateinit var wallpaperManager: WallpaperManager
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentDetailsBinding.bind(view)
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_bar).isVisible = false
-        binding.apply {
-            photo = args.photo
-            (activity as AppCompatActivity).supportActionBar?.show()
-            (activity as AppCompatActivity).supportActionBar?.setBackgroundDrawable(
-                ColorDrawable(
-                    Color.WHITE
-                )
-            )
-            (activity as AppCompatActivity).supportActionBar?.title = photo.description
-            Glide.with(this@DetailsFragment)
-                .asBitmap()
-                .load(photo.url?.regular)
-                .error(R.drawable.ic_error)
-                .into(object : CustomTarget<Bitmap>() {
-                    override fun onResourceReady(
-                        resource: Bitmap,
-                        transition: Transition<in Bitmap>?
-                    ) {
-                        ivPhoto.setImageBitmap(resource)
-                        binding.progressBar.isVisible = false
-                    }
+        viewModel = ViewModelProvider(this).get(PhotoDetailsViewModel::class.java)
+        wallpaperManager = WallpaperManager.getInstance(requireContext())
+        setUI()
+        setObserver()
+        val isOnline = ImageUtils.isOnline(requireContext())
+        viewModel.getPhoto(requireContext(), args.photoId, isOnline)
+        onClickListener()
+    }
 
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        binding.progressBar.isVisible = false
-                    }
-                })
-        }
-        binding.share.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions(
-                    arrayOf(
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ), 1
-                )
-            } else {
-                shareContent()
-            }
-        }
+    private fun onClickListener() {
+        binding.share.setOnClickListener { checkPermission() }
         binding.settings.setOnClickListener {
-            binding.ll1.isVisible = true
-            binding.ll2.isVisible = true
-            binding.ll3.isVisible = true
+            setSettingsVisible(true)
         }
         binding.ll1.setOnClickListener {
-            try {
-                val bitmap = (binding.ivPhoto.drawable as BitmapDrawable).bitmap
-                val myWallpaperManager = WallpaperManager
-                    .getInstance(requireContext())
-                myWallpaperManager.setBitmap(bitmap)
-                Toast.makeText(
-                    requireContext(), "Wallpaper set",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } catch (e: Exception) {
-                Toast.makeText(
-                    requireContext(),
-                    "Error setting Wallpaper", Toast.LENGTH_SHORT
-                )
-                    .show()
-            }
-            binding.ll1.isVisible = false
-            binding.ll2.isVisible = false
-            binding.ll3.isVisible = false
+            setAsWallpaper()
         }
         binding.ll2.setOnClickListener {
-            try {
-                val bitmap = (binding.ivPhoto.drawable as BitmapDrawable).bitmap
-                val myWallpaperManager = WallpaperManager
-                    .getInstance(requireContext())
-                myWallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_LOCK)
-                Toast.makeText(
-                    requireContext(), "Lock screen set",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } catch (e: Exception) {
-                Toast.makeText(
-                    requireContext(),
-                    "Error setting Lock screen", Toast.LENGTH_SHORT
-                )
-                    .show()
-            }
-            binding.ll1.isVisible = false
-            binding.ll2.isVisible = false
-            binding.ll3.isVisible = false
+            setAsLockScreen()
         }
+        binding.ll3.setOnClickListener {
+            unsplashPhoto?.let { it1 -> viewModel.savePhoto(requireContext(), it1) }
+            Toast.makeText(requireContext(), "наверное все хорошо", Toast.LENGTH_SHORT).show()
+            setSettingsVisible(false)
+        }
+        binding.resize.setOnClickListener {
+            resize()
+        }
+        binding.info.setOnClickListener {
+            showInfo()
+        }
+    }
+
+    private fun setObserver() {
+        viewModel.unsplashPhoto.observe(viewLifecycleOwner, { photo ->
+            showDetail(photo)
+            unsplashPhoto = photo
+        })
+        viewModel.requestError.observe(viewLifecycleOwner, { requestError ->
+            Toast.makeText(requireContext(), requestError, Toast.LENGTH_SHORT).show()
+        })
+        viewModel.showProgress.observe(viewLifecycleOwner, { showProgress ->
+            binding.progressBar.visibility = if (showProgress) View.VISIBLE else View.GONE
+        })
+    }
+
+    private fun showDetail(photo: UnsplashPhoto) {
+        ImageUtils.buildGradle(
+            requireContext(),
+            photo.urlUnsplash?.regular.toString(),
+            binding.ivPhoto
+        )
+        (activity as AppCompatActivity).supportActionBar?.title = photo.description
+    }
+
+    private fun setUI() {
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_bar).isVisible = false
+        (activity as AppCompatActivity).supportActionBar?.show()
+        (activity as AppCompatActivity).supportActionBar?.setBackgroundDrawable(
+            ColorDrawable(
+                Color.WHITE
+            )
+        )
+    }
+
+    private fun checkPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ), 1
+            )
+        } else {
+            shareContent()
+        }
+    }
+
+    private fun showInfo() {
+        if(unsplashPhoto != null) {
+            val infoAboutAuthorLayout = LayoutInflater.from(requireContext())
+                .inflate(R.layout.user_info_view, binding.mainConstraint, false)
+            val layoutBinding = UserInfoViewBinding.bind(infoAboutAuthorLayout)
+            setInfo(layoutBinding)
+            binding.prevContent.addView(infoAboutAuthorLayout)
+            binding.prevContent.background = resources.getDrawable(R.drawable.rounded)
+            (activity as AppCompatActivity).supportActionBar?.hide()
+            binding.constraintLayout2.isVisible = false
+            binding.resize.isVisible = false
+            binding.back.isVisible = true
+        }else{
+            Toast.makeText(requireContext(), "Wait while image is loaded", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setInfo(layoutBinding: UserInfoViewBinding) {
+        layoutBinding.userName.text = unsplashPhoto?.unsplashUser?.name
+        layoutBinding.inst.text = unsplashPhoto?.unsplashUser?.inst
+        layoutBinding.tw.text = unsplashPhoto?.unsplashUser?.twitter
+        layoutBinding.userNick.text = unsplashPhoto?.unsplashUser?.twitter
+
+        ImageUtils.buildGradle(
+            requireContext(),
+            unsplashPhoto?.unsplashUser?.unsplashProfileImage?.medium.toString(),
+            layoutBinding.userImage
+        )
+        layoutBinding.imgDescription.text = unsplashPhoto?.description
+        val jud: Date = SimpleDateFormat("yyyy-MM-dd").parse(unsplashPhoto?.date)
+        val date: String =
+            DateFormat.getDateInstance(SimpleDateFormat.LONG, Locale("ru")).format(jud)
+        layoutBinding.date.text = date
+        layoutBinding.color.text = unsplashPhoto?.color
+        layoutBinding.size.text = "Px: ${unsplashPhoto?.width} x ${unsplashPhoto?.height}"
+    }
+
+    private fun shareContent() {
+        val bitmap = (binding.ivPhoto.drawable as BitmapDrawable).bitmap
+
+        val pathOfBmp = MediaStore.Images.Media.insertImage(
+            requireActivity().contentResolver,
+            bitmap,
+            "${unsplashPhoto?.description}",
+            null
+        )
+        val bmpUri = Uri.parse(pathOfBmp)
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        intent.type = "image/png"
+        intent.putExtra(Intent.EXTRA_STREAM, bmpUri)
+        startActivity(Intent.createChooser(intent, "Share image via"))
+    }
+
+    private fun setSettingsVisible(visible: Boolean) {
+        binding.ll1.isVisible = visible
+        binding.ll2.isVisible = visible
+        binding.ll3.isVisible = visible
+    }
+
+    private fun setAsWallpaper() {
+        try {
+            val bitmap = (binding.ivPhoto.drawable as BitmapDrawable).bitmap
+            wallpaperManager.setBitmap(bitmap)
+            Toast.makeText(
+                requireContext(), "Wallpaper set",
+                Toast.LENGTH_SHORT
+            ).show()
+        } catch (e: Exception) {
+            Toast.makeText(
+                requireContext(),
+                "Error setting Wallpaper", Toast.LENGTH_SHORT
+            )
+                .show()
+        }
+        setSettingsVisible(false)
+    }
+
+    private fun setAsLockScreen() {
+        try {
+            val bitmap = (binding.ivPhoto.drawable as BitmapDrawable).bitmap
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_LOCK)
+            }
+            Toast.makeText(
+                requireContext(), "Lock screen set",
+                Toast.LENGTH_SHORT
+            ).show()
+        } catch (e: Exception) {
+            Toast.makeText(
+                requireContext(),
+                "Error setting Lock screen", Toast.LENGTH_SHORT
+            )
+                .show()
+        }
+        setSettingsVisible(false)
+    }
+
+    private fun resize() {
         binding.resize.setImageResource(R.drawable.ic_fullscreen)
         binding.resize.tag = R.drawable.ic_fullscreen
         binding.resize.setOnClickListener {
@@ -154,95 +244,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                 (activity as AppCompatActivity).supportActionBar?.show()
             }
         }
-        binding.info.setOnClickListener {
-            val infoAboutAuthorLayout = LayoutInflater.from(requireContext())
-                .inflate(R.layout.user_info_view, binding.mainConstraint, false)
-            val layoutBinding = UserInfoViewBinding.bind(infoAboutAuthorLayout)
-            setInfo(layoutBinding)
-            binding.prevContent.addView(infoAboutAuthorLayout)
-            binding.prevContent.background = resources.getDrawable(R.drawable.rounded)
-            (activity as AppCompatActivity).supportActionBar?.hide()
-            binding.constraintLayout2.isVisible = false
-            binding.resize.isVisible = false
-            binding.back.isVisible = true
-        }
     }
-
-    private fun setInfo(layoutBinding: UserInfoViewBinding) {
-        layoutBinding.userName.text = photo.user?.name
-        if (!photo.user?.inst.isNullOrBlank()) {
-            layoutBinding.inst.text = photo.user?.inst
-        } else {
-            layoutBinding.inst.isVisible = false
-            layoutBinding.instIcon.isVisible = false
-        }
-        if (!photo.user?.twitter.isNullOrBlank()) {
-            layoutBinding.tw.text = photo.user?.twitter
-            layoutBinding.userNick.text = photo.user?.twitter
-        } else {
-            layoutBinding.userNick.isVisible = false
-            layoutBinding.tw.isVisible = false
-            layoutBinding.twIcon.isVisible = false
-        }
-        Glide.with(this@DetailsFragment)
-            .asBitmap()
-            .load(photo.user?.profileImage?.medium)
-            .error(R.drawable.ic_error)
-            .into(object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(
-                    resource: Bitmap,
-                    transition: Transition<in Bitmap>?
-                ) {
-                    layoutBinding.userImage.setImageBitmap(resource)
-                }
-
-                override fun onLoadCleared(placeholder: Drawable?) {
-                }
-            })
-        layoutBinding.imgDescription.text = photo.description
-        val jud: Date = SimpleDateFormat("yyyy-MM-dd").parse(photo.date)
-        val date: String =
-            DateFormat.getDateInstance(SimpleDateFormat.LONG, Locale("ru")).format(jud)
-        layoutBinding.date.text = date
-        layoutBinding.color.text = photo.color
-        layoutBinding.size.text = "Px: ${photo.width} x ${photo.height}"
-    }
-
-    private fun shareContent() {
-        val bitmap = (binding.ivPhoto.drawable as BitmapDrawable).bitmap
-
-        val pathOfBmp = Images.Media.insertImage(
-            requireActivity().contentResolver,
-            bitmap,
-            "${photo.description}",
-            null
-        )
-        val bmpUri = Uri.parse(pathOfBmp)
-        val intent = Intent(Intent.ACTION_SEND)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        intent.type = "image/png"
-        intent.putExtra(Intent.EXTRA_STREAM, bmpUri)
-        startActivity(Intent.createChooser(intent, "Share image via"))
-    }
-
-    private fun setWallpaper() {
-        val bitmap = (binding.ivPhoto.drawable as BitmapDrawable).bitmap
-
-        val pathOfBmp = Images.Media.insertImage(
-            requireActivity().contentResolver,
-            bitmap,
-            "${photo.description}",
-            null
-        )
-        val bmpUri = Uri.parse(pathOfBmp)
-        val intent = Intent(Intent.ACTION_ATTACH_DATA)
-        intent.addCategory(Intent.CATEGORY_DEFAULT)
-        intent.setDataAndType(bmpUri, "image/*")
-        intent.putExtra("mimeType", "image/*")
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        startActivity(Intent.createChooser(intent, "Set as"))
-    }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -254,8 +256,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             shareContent()
         }
         if (requestCode == 2 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-            setWallpaper()
+            shareContent()
         }
     }
-
 }

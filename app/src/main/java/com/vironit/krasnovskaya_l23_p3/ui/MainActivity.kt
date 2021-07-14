@@ -11,8 +11,6 @@ import com.vironit.krasnovskaya_l23_p3.R
 import com.vironit.krasnovskaya_l23_p3.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
-
-@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
