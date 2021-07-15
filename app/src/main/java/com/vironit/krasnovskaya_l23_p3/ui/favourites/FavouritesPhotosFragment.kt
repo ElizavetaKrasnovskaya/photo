@@ -41,11 +41,9 @@ class FavouritesPhotosFragment : Fragment(), DeletedPhotoAdapter.OnItemClickList
 
     private fun setObserver() {
         viewModel.unsplashPhotos.observe(viewLifecycleOwner, { photos ->
-            if (photos.isNotEmpty()) {
-                unsplashPhotos.clear()
-                unsplashPhotos.addAll(photos)
-                adapter.notifyDataSetChanged()
-            }
+            unsplashPhotos.clear()
+            unsplashPhotos.addAll(photos)
+            adapter.notifyDataSetChanged()
         })
     }
 
@@ -59,5 +57,6 @@ class FavouritesPhotosFragment : Fragment(), DeletedPhotoAdapter.OnItemClickList
         unsplashPhotos.removeAt(position)
         adapter.notifyDataSetChanged()
         viewModel.deleteFavorite(requireContext(), photoId)
+        setObserver()
     }
 }

@@ -1,6 +1,7 @@
 package com.vironit.krasnovskaya_l23_p3.ui
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +11,13 @@ import android.view.animation.LayoutAnimationController
 import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,8 +31,10 @@ import com.vironit.krasnovskaya_l23_p3.viewmodel.UnsplashViewModel
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 
+
 class WallpaperSearchFragment : Fragment(), PhotoAdapter.OnItemClickListener {
 
+    private val args by navArgs<WallpaperSearchFragmentArgs>()
     private lateinit var binding: FragmentWallpaperSearchBinding
     private lateinit var viewModel: UnsplashViewModel
     private var layoutManager: LinearLayoutManager? = null
@@ -48,14 +53,24 @@ class WallpaperSearchFragment : Fragment(), PhotoAdapter.OnItemClickListener {
         setUI()
         initRecyclerView()
         changeManager()
-        if (ImageUtils.isOnline(requireActivity())) {
-            viewModel.getPhotos()
-        } else {
-            //TODO make error page?
-        }
+        setQuery()
+//        if (ImageUtils.isOnline(requireActivity())) {
+//            viewModel.getPhotos()
+//        } else {
+//            //TODO make error page?
+//        }
         searchView()
         setObserver()
         return binding.root
+    }
+
+    private fun setQuery() {
+        if (!args.query.isNullOrBlank()) {
+            viewModel.searchPhotos(args.query)
+            binding.searchView.setQuery(args.query, true)
+        } else{
+            viewModel.getPhotos()
+        }
     }
 
     private fun setUI() {
@@ -129,21 +144,25 @@ class WallpaperSearchFragment : Fragment(), PhotoAdapter.OnItemClickListener {
         Observable.create(ObservableOnSubscribe<String> { subscriber ->
             binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
                 androidx.appcompat.widget.SearchView.OnQueryTextListener {
+                @RequiresApi(Build.VERSION_CODES.O)
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     binding.recyclerView.scrollToPosition(0)
+                    if (query != null) {
+                        viewModel.saveSearch(query, requireContext())
+                    }
                     binding.searchView.clearFocus()
                     return false
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    if (newText!!.length <= 10) {
+                    if (newText!!.length <= 30) {
                         binding.recyclerView.scrollToPosition(0)
                         unsplashPhotos.clear()
                         subscriber.onNext(newText)
                     } else {
-                        Toast.makeText(requireContext(), "Max size 10 letters", Toast.LENGTH_SHORT)
+                        Toast.makeText(requireContext(), "Max size 30 letters", Toast.LENGTH_SHORT)
                             .show()
-                        binding.searchView.setQuery(newText.substring(0, 10), false)
+                        binding.searchView.setQuery(newText.substring(0, 30), false)
                     }
                     return false
                 }

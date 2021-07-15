@@ -31,8 +31,8 @@ class FavouritesViewModel : ViewModel() {
         CoroutineScope(Dispatchers.IO).launch {
             val dao = UnsplashDb.getInstance(context).photoDao
             dao.delete(photoId)
+            getPhotos(context)
         }
-        getPhotos(context)
     }
 
     private fun convertToPhoto(photoAndUser: PhotoAndUser): UnsplashPhoto {

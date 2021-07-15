@@ -16,8 +16,8 @@ data class UnsplashPhoto(
     @SerializedName("likes") val likes: String?,
     @SerializedName("exif") var unsplashExif: UnsplashExif?,
     @SerializedName("created_at") val date: String?
-){
-    fun convertToPhotoEntity(): PhotoEntity{
+) {
+    fun convertToPhotoEntity(): PhotoEntity {
         return PhotoEntity(
             this.id,
             this.color,

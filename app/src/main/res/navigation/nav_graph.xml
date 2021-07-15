@@ -30,6 +30,12 @@
             app:destination="@id/detailsFragment"
             app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/slide_out" />
+        <argument
+            android:name="query"
+            app:argType="string"
+            android:defaultValue=""
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out" />
     </fragment>
     <fragment
         android:id="@+id/favourites_fragment"
@@ -38,7 +44,12 @@
         tools:layout="@layout/fragment_favourites">
         <action
             android:id="@+id/action_favourites_fragment_to_detailsFragment"
-            app:destination="@id/detailsFragment" />
+            app:destination="@id/detailsFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out" />
+        <action
+            android:id="@+id/action_favourites_fragment_to_search_fragment"
+            app:destination="@id/search_fragment" />
     </fragment>
     <fragment
         android:id="@+id/history_fragment"
@@ -50,6 +61,9 @@
             app:destination="@id/favourites_fragment"
             app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/slide_out" />
+        <action
+            android:id="@+id/action_history_fragment_to_search_fragment"
+            app:destination="@id/search_fragment" />
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"

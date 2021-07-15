@@ -58,32 +58,34 @@ class PhotoDetailsViewModel : ViewModel() {
                 var urls: UnsplashPhotoUrl? = null
                 var exif: UnsplashExif? = null
 
-                photoEntity.user?.let { userEntity ->
-                    userEntity.profileImageEntity?.let { profileImageEntity ->
-                        profileImage = profileImageEntity.convertToProfileImage()
+                if(photoEntity != null) {
+                    photoEntity.user?.let { userEntity ->
+                        userEntity.profileImageEntity?.let { profileImageEntity ->
+                            profileImage = profileImageEntity.convertToProfileImage()
+                        }
+                        user = profileImage?.let { userEntity.userEntity.convertToUser(it) }
                     }
-                    user = profileImage?.let { userEntity.userEntity.convertToUser(it) }
-                }
 
-                photoEntity.photoUrlEntity.let { photoUrlEntity ->
-                    if (photoUrlEntity != null) {
-                        urls = photoUrlEntity.convertToPhotoUrl()
+                    photoEntity.photoUrlEntity.let { photoUrlEntity ->
+                        if (photoUrlEntity != null) {
+                            urls = photoUrlEntity.convertToPhotoUrl()
+                        }
                     }
-                }
 
-                photoEntity.exifEntity.let { exifEntity ->
-                    if (exifEntity != null) {
-                        exif = exifEntity.convertToExif()
+                    photoEntity.exifEntity.let { exifEntity ->
+                        if (exifEntity != null) {
+                            exif = exifEntity.convertToExif()
+                        }
                     }
+
+                    val photo = photoEntity.photoEntity.convertToPhoto()
+                    photo.unsplashUser = user
+                    photo.urlUnsplash = urls
+                    photo.unsplashExif = exif
+
+                    showProgress.postValue(false)
+                    unsplashPhoto.postValue(photo)
                 }
-
-                val photo = photoEntity.photoEntity.convertToPhoto()
-                photo.unsplashUser = user
-                photo.urlUnsplash = urls
-                photo.unsplashExif = exif
-
-                showProgress.postValue(false)
-                unsplashPhoto.postValue(photo)
             }
         }
     }

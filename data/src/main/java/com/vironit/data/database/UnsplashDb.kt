@@ -13,7 +13,8 @@ import com.vironit.data.database.model.*
         PhotoEntity::class,
         PhotoUrlEntity::class,
         ProfileImageEntity::class,
-        UserEntity::class
+        UserEntity::class,
+        SearchEntity::class
     ],
     version = 1
 )
@@ -24,6 +25,7 @@ abstract class UnsplashDb : RoomDatabase() {
     abstract val photoUrlDao: PhotoUrlDao
     abstract val profileImageDao: ProfileImageDao
     abstract val userDao: UserDao
+    abstract val searchDao: SearchDao
 
     companion object {
         @Volatile
@@ -34,7 +36,7 @@ abstract class UnsplashDb : RoomDatabase() {
                 return INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     UnsplashDb::class.java,
-                    "unsplashdb"
+                    "check2"
                 ).build()
             }
         }
