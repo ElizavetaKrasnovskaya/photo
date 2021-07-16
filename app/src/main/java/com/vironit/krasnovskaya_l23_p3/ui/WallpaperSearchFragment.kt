@@ -3,36 +3,37 @@ package com.vironit.krasnovskaya_l23_p3.ui
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.vironit.data.retrofit.model.UnsplashPhoto
+import com.vironit.domain.retrofit.model.UnsplashPhoto
 import com.vironit.krasnovskaya_l23_p3.R
 import com.vironit.krasnovskaya_l23_p3.adapter.PhotoAdapter
-import com.vironit.krasnovskaya_l23_p3.common.util.ImageUtils
+import com.vironit.krasnovskaya_l23_p3.common.base.BaseFragment
 import com.vironit.krasnovskaya_l23_p3.databinding.FragmentWallpaperSearchBinding
 import com.vironit.krasnovskaya_l23_p3.viewmodel.UnsplashViewModel
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
+import kotlin.system.exitProcess
 
 
-class WallpaperSearchFragment : Fragment(), PhotoAdapter.OnItemClickListener {
+class WallpaperSearchFragment : BaseFragment(R.layout.fragment_wallpaper_search),
+    PhotoAdapter.OnItemClickListener {
 
     private val args by navArgs<WallpaperSearchFragmentArgs>()
     private lateinit var binding: FragmentWallpaperSearchBinding
@@ -41,6 +42,7 @@ class WallpaperSearchFragment : Fragment(), PhotoAdapter.OnItemClickListener {
     private val lastVisibleItemPosition: Int
         get() = layoutManager!!.findLastVisibleItemPosition()
     private lateinit var adapter: PhotoAdapter
+    private var backPressed = false
 
     private val unsplashPhotos = ArrayList<UnsplashPhoto>()
 
@@ -61,6 +63,7 @@ class WallpaperSearchFragment : Fragment(), PhotoAdapter.OnItemClickListener {
 //        }
         searchView()
         setObserver()
+        backNavigation()
         return binding.root
     }
 
@@ -68,15 +71,14 @@ class WallpaperSearchFragment : Fragment(), PhotoAdapter.OnItemClickListener {
         if (!args.query.isNullOrBlank()) {
             viewModel.searchPhotos(args.query)
             binding.searchView.setQuery(args.query, true)
-        } else{
+        } else {
             viewModel.getPhotos()
         }
     }
 
     private fun setUI() {
-        (activity as AppCompatActivity).supportActionBar?.hide()
         requireActivity().window.statusBarColor = resources.getColor(R.color.white)
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_bar).isVisible = true
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 
     private fun setObserver() {
@@ -148,7 +150,9 @@ class WallpaperSearchFragment : Fragment(), PhotoAdapter.OnItemClickListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     binding.recyclerView.scrollToPosition(0)
                     if (query != null) {
-                        viewModel.saveSearch(query, requireContext())
+                        unsplashPhotos.clear()
+                        viewModel.saveSearch(query)
+                        subscriber.onNext(query)
                     }
                     binding.searchView.clearFocus()
                     return false
@@ -171,5 +175,21 @@ class WallpaperSearchFragment : Fragment(), PhotoAdapter.OnItemClickListener {
             .subscribe { text ->
                 viewModel.searchPhotos(text)
             }
+    }
+
+    private fun backNavigation() {
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (backPressed) {
+                        exitProcess(0)
+                    } else {
+                        backPressed = true
+                        toast("Press again to exit")
+                    }
+                    Handler().postDelayed({ backPressed = false }, 2000)
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 }

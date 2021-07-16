@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.vironit.data.database.dao.*
-import com.vironit.data.database.model.*
+import com.vironit.domain.database.model.*
 
 @Database(
     entities = [

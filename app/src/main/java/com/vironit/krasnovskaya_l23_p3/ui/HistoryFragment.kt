@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.vironit.data.database.model.SearchEntity
+import com.vironit.domain.database.model.SearchEntity
 import com.vironit.krasnovskaya_l23_p3.adapter.HistoryAdapter
 import com.vironit.krasnovskaya_l23_p3.databinding.FragmentHistoryBinding
 import com.vironit.krasnovskaya_l23_p3.viewmodel.SearchViewModel
@@ -18,17 +19,16 @@ class HistoryFragment : Fragment(), HistoryAdapter.OnItemClickListener {
     private lateinit var binding: FragmentHistoryBinding
     private lateinit var adapter: HistoryAdapter
     private val searchList = ArrayList<SearchEntity>()
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHistoryBinding.inflate(layoutInflater)
-        viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
         initRecyclerview()
         setObserver()
-        viewModel.getSearches(requireContext())
+        viewModel.getSearches()
         return binding.root
     }
 
@@ -53,20 +53,6 @@ class HistoryFragment : Fragment(), HistoryAdapter.OnItemClickListener {
     }
 
     override fun onLikeClick(id: Int, isFavourite: Int) {
-        viewModel.addToFavourites(requireContext(), id, isFavourite)
+        viewModel.addToFavourites(id, isFavourite)
     }
-
-//    override fun onDeleteClick(searchId: Int, position: Int) {
-//        searchList.removeAt(position)
-//        adapter.notifyDataSetChanged()
-//        viewModel.addToFavourites(requireContext(), searchId)
-//        setObserver()
-//    }
-
-//    override fun onItemClick(id: Int) {
-//        val action =
-//            FavouritesFragmentDirections.actionFavouritesFragmentToDetailsFragment(photoId)
-//        findNavController().navigate(action)
-//    }
-
 }

@@ -1,24 +1,31 @@
 package com.vironit.krasnovskaya_l23_p3.viewmodel
 
-import android.content.Context
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.vironit.data.database.UnsplashDb
-import com.vironit.data.database.model.PhotoAndUser
-import com.vironit.data.retrofit.model.*
+import com.vironit.domain.database.model.PhotoAndUser
+import com.vironit.domain.interactor.DatabaseInteractor
+import com.vironit.domain.retrofit.model.*
+import com.vironit.krasnovskaya_l23_p3.MyApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FavouritesViewModel : ViewModel() {
+class FavouritesViewModel(application: Application) : AndroidViewModel(application) {
 
+    @Inject
+    lateinit var databaseInteractor: DatabaseInteractor
     val unsplashPhotos = MutableLiveData<List<UnsplashPhoto>>()
 
-    fun getPhotos(context: Context) {
+    init {
+        (application as MyApp).getAppComponent().injectFavouritesViewModel(this)
+    }
+
+    fun getPhotos() {
         val tempPhotos = ArrayList<UnsplashPhoto>()
         CoroutineScope(Dispatchers.IO).launch {
-            val dao = UnsplashDb.getInstance(context).photoDao
-            val photos = dao.getAll()
+            val photos = databaseInteractor.getAllPhotos()
             photos.forEach {
                 val photo = convertToPhoto(it)
                 tempPhotos.add(photo)
@@ -27,11 +34,10 @@ class FavouritesViewModel : ViewModel() {
         }
     }
 
-    fun deleteFavorite(context: Context, photoId: String) {
+    fun deleteFavorite(photoId: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val dao = UnsplashDb.getInstance(context).photoDao
-            dao.delete(photoId)
-            getPhotos(context)
+            databaseInteractor.deletePhoto(photoId)
+            getPhotos()
         }
     }
 
@@ -57,7 +63,7 @@ class FavouritesViewModel : ViewModel() {
             exif = exifEntity.convertToExif()
         }
 
-        val photo = photoAndUser.photoEntity!!.convertToPhoto()
+        val photo = photoAndUser.photoEntity.convertToPhoto()
         photo.unsplashUser = user
         photo.urlUnsplash = url
         photo.unsplashExif = exif

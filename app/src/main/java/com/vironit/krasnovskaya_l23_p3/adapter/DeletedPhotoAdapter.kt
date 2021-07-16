@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.vironit.data.retrofit.model.UnsplashPhoto
+import com.vironit.domain.retrofit.model.UnsplashPhoto
 import com.vironit.krasnovskaya_l23_p3.common.util.ImageUtils
 import com.vironit.krasnovskaya_l23_p3.databinding.DeletedRecyclerviewItemBinding
 

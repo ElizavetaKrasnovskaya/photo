@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.vironit.data.retrofit.model.UnsplashPhoto
+import com.vironit.domain.retrofit.model.UnsplashPhoto
 import com.vironit.krasnovskaya_l23_p3.adapter.DeletedPhotoAdapter
 import com.vironit.krasnovskaya_l23_p3.databinding.FragmentFavouritesPhotosBinding
 import com.vironit.krasnovskaya_l23_p3.viewmodel.FavouritesViewModel
@@ -28,7 +28,7 @@ class FavouritesPhotosFragment : Fragment(), DeletedPhotoAdapter.OnItemClickList
         viewModel = ViewModelProvider(this).get(FavouritesViewModel::class.java)
         initRecyclerview()
         setObserver()
-        viewModel.getPhotos(requireContext())
+        viewModel.getPhotos()
         return binding.root
     }
 
@@ -56,7 +56,7 @@ class FavouritesPhotosFragment : Fragment(), DeletedPhotoAdapter.OnItemClickList
     override fun onDeleteClick(photoId: String, position: Int) {
         unsplashPhotos.removeAt(position)
         adapter.notifyDataSetChanged()
-        viewModel.deleteFavorite(requireContext(), photoId)
+        viewModel.deleteFavorite(photoId)
         setObserver()
     }
 }

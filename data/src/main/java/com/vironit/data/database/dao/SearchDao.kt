@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.vironit.data.database.model.SearchEntity
+import com.vironit.domain.database.model.SearchEntity
 
 @Dao
 interface SearchDao {

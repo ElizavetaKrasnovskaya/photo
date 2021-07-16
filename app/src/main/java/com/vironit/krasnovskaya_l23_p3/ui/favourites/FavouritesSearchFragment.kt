@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.vironit.data.database.model.SearchEntity
+import com.vironit.domain.database.model.SearchEntity
 import com.vironit.krasnovskaya_l23_p3.adapter.SearchAdapter
 import com.vironit.krasnovskaya_l23_p3.databinding.FragmentFavouritesSearchBinding
 import com.vironit.krasnovskaya_l23_p3.viewmodel.FavouriteSearchViewModel
@@ -18,17 +18,16 @@ class FavouritesSearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
     private lateinit var binding: FragmentFavouritesSearchBinding
     private lateinit var adapter: SearchAdapter
     private val searchList = ArrayList<SearchEntity>()
-    private lateinit var viewModelFavourite: FavouriteSearchViewModel
+    private val viewModelFavourite: FavouriteSearchViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFavouritesSearchBinding.inflate(layoutInflater)
-        viewModelFavourite = ViewModelProvider(this).get(FavouriteSearchViewModel::class.java)
         initRecyclerview()
         setObserver()
-        viewModelFavourite.getSearches(requireContext())
+        viewModelFavourite.getSearches()
         return binding.root
     }
 
@@ -50,7 +49,7 @@ class FavouritesSearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
     override fun onDeleteClick(searchId: Int, position: Int) {
         searchList.removeAt(position)
         adapter.notifyDataSetChanged()
-        viewModelFavourite.deleteSearch(requireContext(), searchId)
+        viewModelFavourite.deleteSearch(searchId)
         setObserver()
     }
 

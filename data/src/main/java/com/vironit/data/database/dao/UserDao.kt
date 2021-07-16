@@ -3,7 +3,7 @@ package com.vironit.data.database.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import com.vironit.data.database.model.UserEntity
+import com.vironit.domain.database.model.UserEntity
 
 @Dao
 interface UserDao {

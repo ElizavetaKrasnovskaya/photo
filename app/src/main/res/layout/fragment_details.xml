@@ -9,6 +9,32 @@
     android:fitsSystemWindows="false"
     tools:context=".ui.DetailsFragment">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/white"
+        android:minHeight="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_black_back"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        app:titleTextColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="viewStart"
+            tools:text="Text"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </androidx.appcompat.widget.Toolbar>
+
     <ImageView
         android:id="@+id/iv_photo"
         android:layout_width="0dp"
@@ -18,7 +44,7 @@
         app:layout_constraintBottom_toTopOf="@+id/prev_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         tools:src="@tools:sample/avatars" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -163,11 +189,11 @@
         android:id="@+id/resize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="20dp"
         android:backgroundTint="@color/white"
         android:clickable="true"
         android:elevation="10dp"
+        android:layout_marginTop="80dp"
         android:scaleType="center"
         android:src="@drawable/ic_fullscreen"
         app:borderWidth="0dp"
@@ -194,9 +220,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
         android:backgroundTint="@color/white"
         android:clickable="true"
+        android:layout_marginTop="16dp"
         android:elevation="10dp"
         android:scaleType="center"
         android:src="@drawable/ic_back"
@@ -205,6 +231,6 @@
         app:fabCustomSize="45dp"
         app:fabSize="auto"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

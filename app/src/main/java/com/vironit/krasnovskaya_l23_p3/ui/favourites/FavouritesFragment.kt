@@ -3,32 +3,43 @@ package com.vironit.krasnovskaya_l23_p3.ui.favourites
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.BlendModeColorFilterCompat
-import androidx.core.graphics.BlendModeCompat
-import androidx.fragment.app.Fragment
+import androidx.core.view.isVisible
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.vironit.krasnovskaya_l23_p3.R
 import com.vironit.krasnovskaya_l23_p3.adapter.FavouritesTabLayoutAdapter
+import com.vironit.krasnovskaya_l23_p3.common.base.BaseFragment
 import com.vironit.krasnovskaya_l23_p3.databinding.FragmentFavouritesBinding
+import kotlin.system.exitProcess
 
 
-class FavouritesFragment : Fragment(R.layout.fragment_favourites) {
+class FavouritesFragment : BaseFragment(R.layout.fragment_favourites) {
 
     private lateinit var binding: FragmentFavouritesBinding
     private lateinit var adapter: FavouritesTabLayoutAdapter
+    private var backPressed = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentFavouritesBinding.inflate(layoutInflater, container, false)
+        setUI()
         initTabs()
+        backNavigation()
         return binding.root
+    }
+
+    private fun setUI() {
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 
     private fun initTabs() {
@@ -66,5 +77,21 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourites) {
 
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
+    }
+
+    private fun backNavigation() {
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (backPressed) {
+                        exitProcess(0)
+                    } else {
+                        backPressed = true
+                        toast("Press again to exit")
+                    }
+                    Handler().postDelayed({ backPressed = false }, 2000)
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 }

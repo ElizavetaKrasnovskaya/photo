@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.vironit.data.database.model.SearchEntity
+import com.vironit.domain.database.model.SearchEntity
 import com.vironit.krasnovskaya_l23_p3.databinding.SearchRecyclerviewItemBinding
 import java.text.SimpleDateFormat
 import java.util.*

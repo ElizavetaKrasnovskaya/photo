@@ -1,31 +1,38 @@
 package com.vironit.krasnovskaya_l23_p3.viewmodel
 
-import android.content.Context
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.vironit.data.database.UnsplashDb
-import com.vironit.data.database.model.SearchEntity
-import com.vironit.data.retrofit.model.UnsplashPhoto
+import com.vironit.domain.database.model.SearchEntity
+import com.vironit.domain.interactor.SearchInteractor
+import com.vironit.krasnovskaya_l23_p3.MyApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FavouriteSearchViewModel: ViewModel() {
+class FavouriteSearchViewModel(application: Application) :
+    AndroidViewModel(application) {
+
+    @Inject
+    lateinit var searchInteractor: SearchInteractor
 
     val searchList = MutableLiveData<List<SearchEntity>>()
 
-    fun getSearches(context: Context) {
+    init {
+        (application as MyApp).getAppComponent().injectFavouriteSearchViewModel(this)
+    }
+
+    fun getSearches() {
         CoroutineScope(Dispatchers.IO).launch {
-            val dao = UnsplashDb.getInstance(context).searchDao
-            searchList.postValue(dao.getFavourite())
+            searchList.postValue(searchInteractor.getFavourite())
         }
     }
 
-    fun deleteSearch(context: Context, searchId: Int) {
+    fun deleteSearch(searchId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            val dao = UnsplashDb.getInstance(context).searchDao
-            dao.delete(searchId)
-            getSearches(context)
+            searchInteractor.delete(searchId)
+            getSearches()
         }
     }
 

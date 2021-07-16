@@ -5,10 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.vironit.data.retrofit.model.UnsplashPhoto
-import com.vironit.krasnovskaya_l23_p3.R
+import com.vironit.domain.retrofit.model.UnsplashPhoto
 import com.vironit.krasnovskaya_l23_p3.common.util.ImageUtils
 import com.vironit.krasnovskaya_l23_p3.databinding.RecyclerviewItemBinding
 

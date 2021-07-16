@@ -1,38 +1,50 @@
 package com.vironit.krasnovskaya_l23_p3.viewmodel
 
-import android.content.Context
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.vironit.data.database.UnsplashDb
-import com.vironit.data.database.model.SearchEntity
-import com.vironit.data.retrofit.api.ApiService
-import com.vironit.data.retrofit.api.ClientHttp
 import com.vironit.data.retrofit.api.RequestError
-import com.vironit.data.retrofit.model.UnsplashPhoto
+import com.vironit.domain.database.model.SearchEntity
+import com.vironit.domain.interactor.RetrofitInteractor
+import com.vironit.domain.interactor.SearchInteractor
+import com.vironit.domain.retrofit.model.UnsplashPhoto
 import com.vironit.krasnovskaya_l23_p3.ACCESS_KEY
-import com.vironit.krasnovskaya_l23_p3.BASE_URL
 import com.vironit.krasnovskaya_l23_p3.CLIENT_ID
+import com.vironit.krasnovskaya_l23_p3.MyApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 
-class UnsplashViewModel : ViewModel() {
+class UnsplashViewModel(
+    application: Application
+) : AndroidViewModel(application) {
+
+    @Inject
+    lateinit var retrofitInteractor: RetrofitInteractor
+
+    @Inject
+    lateinit var searchInteractor: SearchInteractor
 
     private var page: Int = 1
     val unsplashPhotos = MutableLiveData<List<UnsplashPhoto>>()
     val showProgress = MutableLiveData<Boolean>()
     val requestError = MutableLiveData<String>()
 
+    init {
+        (application as MyApp).getAppComponent().injectUnsplashViewModel(this)
+    }
+
     fun getPhotos() {
         showProgress.postValue(true)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val call =
-                    ClientHttp.getRetrofit(BASE_URL).create(ApiService::class.java)
+                    retrofitInteractor
                         .getPhotos(
                             ACCESS_KEY,
                             "photos/?page=$page",
@@ -59,7 +71,7 @@ class UnsplashViewModel : ViewModel() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val call =
-                    ClientHttp.getRetrofit(BASE_URL).create(ApiService::class.java)
+                    retrofitInteractor
                         .searchPhoto(
                             ACCESS_KEY,
                             "search/photos/?page=$page",
@@ -85,11 +97,11 @@ class UnsplashViewModel : ViewModel() {
         }
     }
 
-    fun saveSearch(query: String, context: Context) {
+    fun saveSearch(query: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val call =
-                    ClientHttp.getRetrofit(BASE_URL).create(ApiService::class.java)
+                    retrofitInteractor
                         .searchPhoto(
                             ACCESS_KEY,
                             "search/photos/?page=$page",
@@ -100,7 +112,7 @@ class UnsplashViewModel : ViewModel() {
                     val total = call.headers()["x-total"]
                     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
                     val currentDate = sdf.format(Date())
-                    saveSearchToDb(context, SearchEntity(query, total, currentDate, false))
+                    saveSearchToDb(SearchEntity(query, total, currentDate, false))
                 }
             } catch (e: Throwable) {
                 requestError.postValue(RequestError.getByValue(0).toString())
@@ -109,13 +121,9 @@ class UnsplashViewModel : ViewModel() {
         }
     }
 
-    private fun saveSearchToDb(context: Context, searchEntity: SearchEntity) {
-        val check = ArrayList<SearchEntity>()
+    private fun saveSearchToDb(searchEntity: SearchEntity) {
         CoroutineScope(Dispatchers.IO).launch {
-            val searchDao = UnsplashDb.getInstance(context).searchDao
-            searchDao.insert(searchEntity)
-            check.addAll(searchDao.getAll())
-            print(check)
+            searchInteractor.insert(searchEntity)
         }
     }
 }

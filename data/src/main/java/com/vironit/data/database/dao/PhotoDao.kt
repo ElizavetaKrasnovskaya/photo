@@ -4,8 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.vironit.data.database.model.PhotoAndUser
-import com.vironit.data.database.model.PhotoEntity
+import com.vironit.domain.database.model.PhotoAndUser
+import com.vironit.domain.database.model.PhotoEntity
 
 @Dao
 interface PhotoDao {

@@ -1,8 +1,8 @@
 package com.vironit.data.retrofit.api
 
-import com.vironit.data.retrofit.model.SearchPhotoResponse
-import com.vironit.data.retrofit.model.UnsplashPhoto
-import com.vironit.data.retrofit.model.UnsplashUser
+import com.vironit.domain.retrofit.model.SearchPhotoResponse
+import com.vironit.domain.retrofit.model.UnsplashPhoto
+import com.vironit.domain.retrofit.model.UnsplashUser
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header

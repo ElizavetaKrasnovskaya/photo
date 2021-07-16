@@ -6,24 +6,23 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
+import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.vironit.data.retrofit.model.UnsplashPhoto
+import com.vironit.domain.retrofit.model.UnsplashPhoto
 import com.vironit.krasnovskaya_l23_p3.R
+import com.vironit.krasnovskaya_l23_p3.common.base.BaseFragment
 import com.vironit.krasnovskaya_l23_p3.common.util.ImageUtils
 import com.vironit.krasnovskaya_l23_p3.databinding.FragmentDetailsBinding
 import com.vironit.krasnovskaya_l23_p3.databinding.UserInfoViewBinding
@@ -33,25 +32,25 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class DetailsFragment : Fragment(R.layout.fragment_details) {
+class DetailsFragment : BaseFragment(R.layout.fragment_details) {
 
     private val args by navArgs<DetailsFragmentArgs>()
     private lateinit var binding: FragmentDetailsBinding
-    private lateinit var viewModel: PhotoDetailsViewModel
+    private val viewModel: PhotoDetailsViewModel by viewModels()
     private var unsplashPhoto: UnsplashPhoto? = null
     private lateinit var wallpaperManager: WallpaperManager
+    private lateinit var infoAboutAuthorLayout: View
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentDetailsBinding.bind(view)
-        viewModel = ViewModelProvider(this).get(PhotoDetailsViewModel::class.java)
         wallpaperManager = WallpaperManager.getInstance(requireContext())
         setUI()
         setObserver()
         val isOnline = ImageUtils.isOnline(requireContext())
-        viewModel.getPhoto(requireContext(), args.photoId, isOnline)
+        viewModel.getPhoto(args.photoId, isOnline)
         onClickListener()
     }
 
@@ -67,8 +66,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             setAsLockScreen()
         }
         binding.ll3.setOnClickListener {
-            unsplashPhoto?.let { it1 -> viewModel.savePhoto(requireContext(), it1) }
-            Toast.makeText(requireContext(), "наверное все хорошо", Toast.LENGTH_SHORT).show()
+            unsplashPhoto?.let { it1 -> viewModel.savePhoto(it1) }
             setSettingsVisible(false)
         }
         binding.resize.setOnClickListener {
@@ -76,6 +74,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         }
         binding.info.setOnClickListener {
             showInfo()
+        }
+        binding.back.setOnClickListener {
+            hideUserInfo()
         }
     }
 
@@ -85,7 +86,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             unsplashPhoto = photo
         })
         viewModel.requestError.observe(viewLifecycleOwner, { requestError ->
-            Toast.makeText(requireContext(), requestError, Toast.LENGTH_SHORT).show()
+            toast(requestError)
         })
         viewModel.showProgress.observe(viewLifecycleOwner, { showProgress ->
             binding.progressBar.visibility = if (showProgress) View.VISIBLE else View.GONE
@@ -98,17 +99,25 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             photo.urlUnsplash?.regular.toString(),
             binding.ivPhoto
         )
-        (activity as AppCompatActivity).supportActionBar?.title = photo.description
+        binding.description.text = photo.description
     }
 
     private fun setUI() {
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_bar).isVisible = false
-        (activity as AppCompatActivity).supportActionBar?.show()
-        (activity as AppCompatActivity).supportActionBar?.setBackgroundDrawable(
-            ColorDrawable(
-                Color.WHITE
-            )
-        )
+        (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        binding.toolbar.setNavigationIcon(R.drawable.ic_black_back)
+        binding.toolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
+        binding.resize.setImageResource(R.drawable.ic_fullscreen)
+        binding.resize.tag = R.drawable.ic_fullscreen
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.home) {
+            requireActivity().onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun checkPermission() {
@@ -129,8 +138,8 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     }
 
     private fun showInfo() {
-        if(unsplashPhoto != null) {
-            val infoAboutAuthorLayout = LayoutInflater.from(requireContext())
+        if (unsplashPhoto != null) {
+            infoAboutAuthorLayout = LayoutInflater.from(requireContext())
                 .inflate(R.layout.user_info_view, binding.mainConstraint, false)
             val layoutBinding = UserInfoViewBinding.bind(infoAboutAuthorLayout)
             setInfo(layoutBinding)
@@ -140,9 +149,17 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             binding.constraintLayout2.isVisible = false
             binding.resize.isVisible = false
             binding.back.isVisible = true
-        }else{
-            Toast.makeText(requireContext(), "Wait while image is loaded", Toast.LENGTH_SHORT).show()
+        } else {
+            toast("Wait while image is loaded")
         }
+    }
+
+    private fun hideUserInfo() {
+        binding.prevContent.removeView(infoAboutAuthorLayout)
+        (activity as AppCompatActivity).supportActionBar?.show()
+        binding.constraintLayout2.isVisible = true
+        binding.resize.isVisible = true
+        binding.back.isVisible = false
     }
 
     private fun setInfo(layoutBinding: UserInfoViewBinding) {
@@ -163,6 +180,11 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         layoutBinding.date.text = date
         layoutBinding.color.text = unsplashPhoto?.color
         layoutBinding.size.text = "Px: ${unsplashPhoto?.width} x ${unsplashPhoto?.height}"
+        layoutBinding.portfolio.setOnClickListener {
+            val intent =
+                Intent(Intent.ACTION_VIEW, Uri.parse(unsplashPhoto?.unsplashUser?.portfolio))
+            startActivity(intent)
+        }
     }
 
     private fun shareContent() {
@@ -192,16 +214,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         try {
             val bitmap = (binding.ivPhoto.drawable as BitmapDrawable).bitmap
             wallpaperManager.setBitmap(bitmap)
-            Toast.makeText(
-                requireContext(), "Wallpaper set",
-                Toast.LENGTH_SHORT
-            ).show()
+            toast("Wallpaper set")
         } catch (e: Exception) {
-            Toast.makeText(
-                requireContext(),
-                "Error setting Wallpaper", Toast.LENGTH_SHORT
-            )
-                .show()
+            toast("Error setting Wallpaper")
         }
         setSettingsVisible(false)
     }
@@ -212,37 +227,32 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_LOCK)
             }
-            Toast.makeText(
-                requireContext(), "Lock screen set",
-                Toast.LENGTH_SHORT
-            ).show()
+            toast("Lock screen set")
         } catch (e: Exception) {
-            Toast.makeText(
-                requireContext(),
-                "Error setting Lock screen", Toast.LENGTH_SHORT
-            )
-                .show()
+            toast("Error setting Lock screen")
         }
         setSettingsVisible(false)
     }
 
     private fun resize() {
-        binding.resize.setImageResource(R.drawable.ic_fullscreen)
-        binding.resize.tag = R.drawable.ic_fullscreen
-        binding.resize.setOnClickListener {
-            if (binding.resize.tag == R.drawable.ic_fullscreen) {
-                binding.constraintLayout2.isVisible = false
-                binding.resize.setImageResource(R.drawable.ic_fullscreen_exit)
-                binding.resize.tag = R.drawable.ic_fullscreen_exit
-                requireActivity().window.statusBarColor = Color.parseColor("#ff000000")
-                (activity as AppCompatActivity).supportActionBar?.hide()
-            } else {
-                binding.constraintLayout2.isVisible = true
-                binding.resize.setImageResource(R.drawable.ic_fullscreen)
-                binding.resize.tag = R.drawable.ic_fullscreen
-                requireActivity().window.statusBarColor = Color.TRANSPARENT
-                (activity as AppCompatActivity).supportActionBar?.show()
-            }
+        if (binding.resize.tag == R.drawable.ic_fullscreen) {
+            binding.constraintLayout2.isVisible = false
+            binding.resize.setImageResource(R.drawable.ic_fullscreen_exit)
+            binding.resize.tag = R.drawable.ic_fullscreen_exit
+            requireActivity().window.setFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            )
+            (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+        } else if (binding.resize.tag == R.drawable.ic_fullscreen_exit) {
+            binding.constraintLayout2.isVisible = true
+            binding.resize.setImageResource(R.drawable.ic_fullscreen)
+            binding.resize.tag = R.drawable.ic_fullscreen
+            requireActivity().window.clearFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            )
+            requireActivity().window.statusBarColor = Color.WHITE
+            (requireActivity() as AppCompatActivity).supportActionBar?.show()
         }
     }
 
