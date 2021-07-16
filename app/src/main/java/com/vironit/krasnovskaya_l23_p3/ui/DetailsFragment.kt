@@ -181,9 +181,13 @@ class DetailsFragment : BaseFragment(R.layout.fragment_details) {
         layoutBinding.color.text = unsplashPhoto?.color
         layoutBinding.size.text = "Px: ${unsplashPhoto?.width} x ${unsplashPhoto?.height}"
         layoutBinding.portfolio.setOnClickListener {
-            val intent =
-                Intent(Intent.ACTION_VIEW, Uri.parse(unsplashPhoto?.unsplashUser?.portfolio))
-            startActivity(intent)
+            if(unsplashPhoto?.unsplashUser?.portfolio.isNullOrEmpty()){
+                toast("No portfolio")
+            }else {
+                val intent =
+                    Intent(Intent.ACTION_VIEW, Uri.parse(unsplashPhoto?.unsplashUser?.portfolio))
+                startActivity(intent)
+            }
         }
     }
 
