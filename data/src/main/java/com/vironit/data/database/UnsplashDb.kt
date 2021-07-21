@@ -36,7 +36,7 @@ abstract class UnsplashDb : RoomDatabase() {
                 return INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     UnsplashDb::class.java,
-                    "check2"
+                    "check3"
                 ).build()
             }
         }

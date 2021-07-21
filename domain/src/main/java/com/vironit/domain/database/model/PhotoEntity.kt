@@ -8,7 +8,7 @@ import com.vironit.domain.retrofit.model.UnsplashPhoto
 @Entity(
     tableName = "photo"
 )
-class PhotoEntity(
+data class PhotoEntity(
     @PrimaryKey @ColumnInfo(name = "id") val id: String,
     @ColumnInfo(name = "width") val width: String?,
     @ColumnInfo(name = "height") val height: String?,

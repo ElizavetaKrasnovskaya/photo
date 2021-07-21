@@ -15,7 +15,7 @@ import com.vironit.domain.retrofit.model.UnsplashProfileImage
         onDelete = ForeignKey.CASCADE
     )]
 )
-class ProfileImageEntity(
+data class ProfileImageEntity(
     @ColumnInfo(name = "small") val small: String?,
     @ColumnInfo(name = "medium") val medium: String?,
     @ColumnInfo(name = "large") val large: String?,

@@ -16,7 +16,7 @@ import com.vironit.domain.retrofit.model.UnsplashUser
         onDelete = ForeignKey.CASCADE
     )]
 )
-class UserEntity(
+data class UserEntity(
     @PrimaryKey @ColumnInfo(name = "id") val id: String,
     @ColumnInfo(name = "first_name") val firstName: String?,
     @ColumnInfo(name = "second_name") val secondName: String?,

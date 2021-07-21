@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "search")
-class SearchEntity(
+data class SearchEntity(
     @ColumnInfo(name = "query") val query: String?,
     @ColumnInfo(name = "total") val total: String?,
     @ColumnInfo(name = "date") val date: String,

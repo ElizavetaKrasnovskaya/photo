@@ -15,7 +15,7 @@ import com.vironit.domain.retrofit.model.UnsplashPhotoUrl
         onDelete = ForeignKey.CASCADE
     )]
 )
-class PhotoUrlEntity(
+data class PhotoUrlEntity(
     @ColumnInfo(name = "full") val full: String?,
     @ColumnInfo(name = "regular") val regular: String?,
     @ColumnInfo(name = "photoId") val photoId: String? = null

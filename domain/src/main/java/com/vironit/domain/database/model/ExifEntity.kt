@@ -15,7 +15,7 @@ import com.vironit.domain.retrofit.model.UnsplashExif
         onDelete = ForeignKey.CASCADE
     )]
 )
-class ExifEntity(
+data class ExifEntity(
     @ColumnInfo(name = "make") val make: String?,
     @ColumnInfo(name = "model") val model: String?,
     @ColumnInfo(name = "exposure_time") val exposure: String?,
