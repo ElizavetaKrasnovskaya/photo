@@ -1,12 +1,16 @@
 package com.vironit.krasnovskaya_l23_p3.ui
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.paulrybitskyi.persistentsearchview.utils.Utils.getLocale
 import com.vironit.krasnovskaya_l23_p3.R
 import com.vironit.krasnovskaya_l23_p3.databinding.ActivityMainBinding
+import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,16 +28,36 @@ class MainActivity : AppCompatActivity() {
                 else -> showBottomNav()
             }
         }
+        binding.locale.setOnClickListener {
+            changeLocale()
+        }
         binding.bottomBar.setupWithNavController(navController)
     }
 
     private fun showBottomNav() {
         binding.bottomBar.visibility = View.VISIBLE
-
+        binding.locale.visibility = View.VISIBLE
     }
 
     private fun hideBottomNav() {
         binding.bottomBar.visibility = View.GONE
+        binding.locale.visibility = View.GONE
+    }
 
+    private fun changeLocale(){
+        val locale = if(getLocale(this).language == "ru") {
+            Locale("en")
+        }else{
+            Locale("ru")
+        }
+        val config = Configuration(resources.configuration)
+        Locale.setDefault(locale)
+        config.setLocale(locale)
+        baseContext.resources.updateConfiguration(
+            config,
+            baseContext.resources.displayMetrics
+        )
+        binding.bottomBar.menu.clear()
+        binding.bottomBar.inflateMenu(R.menu.menu_bottom)
     }
 }

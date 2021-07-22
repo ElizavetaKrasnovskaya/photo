@@ -12,13 +12,32 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:tag="splash_screen_fragment"
         app:defaultNavHost="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:tag="splash_screen_fragment"
         app:navGraph='@navigation/nav_graph' />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/locale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp16"
+        android:backgroundTint="@color/white"
+        android:clickable="true"
+        android:elevation="10dp"
+        android:focusable="true"
+        android:scaleType="center"
+        app:borderWidth="0dp"
+        app:fabCustomSize="45dp"
+        app:fabSize="auto"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_language"
+        app:tint="@color/iconColor" />
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

@@ -31,7 +31,7 @@
             android:textAlignment="viewStart"
             tools:text="Text"
             android:textColor="#000000"
-            android:textSize="20sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
@@ -127,7 +127,7 @@
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:layout_marginTop="24dp"
-            android:text="Установить как обои рабочего стола"
+            android:text="@string/set_as_desktop_wallpaper"
             android:textColor="@color/textColor" />
     </LinearLayout>
 
@@ -154,7 +154,7 @@
             android:id="@+id/img_text2"
             android:layout_width="match_parent"
             android:layout_height="25dp"
-            android:text="Установить как заставку экрана блокировки"
+            android:text="@string/set_as_lock_screen"
             android:textColor="@color/textColor" />
     </LinearLayout>
 
@@ -181,7 +181,7 @@
             android:id="@+id/img_text3"
             android:layout_width="match_parent"
             android:layout_height="25dp"
-            android:text="Сохранить в избранное"
+            android:text="@string/save_to_favorites"
             android:textColor="@color/textColor" />
     </LinearLayout>
 

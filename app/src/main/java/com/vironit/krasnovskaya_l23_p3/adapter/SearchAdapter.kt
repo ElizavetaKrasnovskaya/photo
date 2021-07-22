@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.vironit.domain.database.model.SearchEntity
+import com.vironit.krasnovskaya_l23_p3.R
 import com.vironit.krasnovskaya_l23_p3.databinding.SearchRecyclerviewItemBinding
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,7 +38,7 @@ class SearchAdapter(private val listener: OnItemClickListener) :
         fun bind(searchEntity: SearchEntity, position: Int) {
             binding.query.text = searchEntity.query
             binding.totalAndDate.text =
-                "${searchEntity.total} результатов, ${formatPubDate(searchEntity.date)}"
+                "${searchEntity.total} ${itemView.context.resources.getString(R.string.results)}, ${formatPubDate(searchEntity.date)}"
             binding.cardView.setOnClickListener {
                 searchEntity.query?.let { it1 ->
                     listener.onItemClick(
