@@ -6,6 +6,7 @@ import com.vironit.domain.repository.DatabaseRepository
 import javax.inject.Inject
 
 class DatabaseRepositoryImpl @Inject constructor(val database: UnsplashDb) : DatabaseRepository {
+
     override suspend fun insertUser(user: UserEntity) {
         database.userDao.insert(user)
     }
@@ -40,5 +41,21 @@ class DatabaseRepositoryImpl @Inject constructor(val database: UnsplashDb) : Dat
 
     override suspend fun deletePhoto(photoId: String) {
         return database.photoDao.delete(photoId)
+    }
+
+    suspend fun getAllUsers(): List<UserEntity>{
+        return database.userDao.getAll()
+    }
+
+    suspend fun getAllExif(): List<ExifEntity>{
+        return database.exifDao.getAll()
+    }
+
+    suspend fun getAllPhotoUrl(): List<PhotoUrlEntity>{
+        return database.photoUrlDao.getAll()
+    }
+
+    suspend fun getAllProfileImage(): List<ProfileImageEntity>{
+        return database.profileImageDao.getAll()
     }
 }

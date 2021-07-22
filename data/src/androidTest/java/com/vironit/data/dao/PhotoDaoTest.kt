@@ -1,8 +1,9 @@
-package com.vironit.data.database
+package com.vironit.data.dao
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.vironit.data.database.UnsplashDb
 import com.vironit.data.database.dao.PhotoDao
 import com.vironit.domain.database.model.PhotoAndUser
 import com.vironit.domain.database.model.PhotoEntity

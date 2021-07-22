@@ -1,10 +1,11 @@
-package com.vironit.data.database
+package com.vironit.data.dao
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
+import com.vironit.data.database.UnsplashDb
 import com.vironit.data.database.dao.ProfileImageDao
 import com.vironit.data.database.dao.UserDao
 import com.vironit.domain.database.model.ProfileImageEntity

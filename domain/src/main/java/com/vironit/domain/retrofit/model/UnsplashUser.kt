@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class UnsplashUser(
     @SerializedName("id") val id: String,
     @SerializedName("first_name") val firstName: String?,
-    @SerializedName("second_name") val secondName: String?,
+    @SerializedName("last_name") val secondName: String?,
     @SerializedName("name") val name: String?,
     @SerializedName("instagram_username") val inst: String?,
     @SerializedName("twitter_username") val twitter: String?,
