@@ -6,7 +6,7 @@
     app:startDestination="@id/splash_screen_fragment">
     <fragment
         android:id="@+id/splash_screen_fragment"
-        android:name="com.vironit.krasnovskaya_l23_p3.ui.SplashScreenFragment"
+        android:name="com.bsuir.photo.ui.SplashScreenFragment"
         android:label="SplashScreenFragment"
         tools:layout="@layout/fragment_splash_screen">
         <action
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/search_fragment"
-        android:name="com.vironit.krasnovskaya_l23_p3.ui.WallpaperSearchFragment"
+        android:name="com.bsuir.photo.ui.WallpaperSearchFragment"
         android:label="fragment_wallpaper_search"
         tools:layout="@layout/fragment_wallpaper_search">
         <action
@@ -32,14 +32,14 @@
             app:exitAnim="@anim/slide_out" />
         <argument
             android:name="query"
-            app:argType="string"
             android:defaultValue=""
+            app:argType="string"
             app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/slide_out" />
     </fragment>
     <fragment
         android:id="@+id/favourites_fragment"
-        android:name="com.vironit.krasnovskaya_l23_p3.ui.favourites.FavouritesFragment"
+        android:name="com.bsuir.photo.ui.favourites.FavouritesFragment"
         android:label="fragment_favourites"
         tools:layout="@layout/fragment_favourites">
         <action
@@ -53,9 +53,9 @@
     </fragment>
     <fragment
         android:id="@+id/history_fragment"
-        android:name="com.vironit.krasnovskaya_l23_p3.ui.HistoryFragment"
+        android:name="com.bsuir.photo.ui.HistoryFragment"
         android:label="fragment_history"
-        tools:layout="@layout/fragment_history" >
+        tools:layout="@layout/fragment_history">
         <action
             android:id="@+id/action_history_fragment_to_favourites_fragment"
             app:destination="@id/favourites_fragment"
@@ -67,13 +67,13 @@
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"
-        android:name="com.vironit.krasnovskaya_l23_p3.ui.DetailsFragment"
+        android:name="com.bsuir.photo.ui.DetailsFragment"
         android:label="fragment_details"
         tools:layout="@layout/fragment_details">
         <argument
             android:name="photoId"
-            app:argType="string"
             android:defaultValue=""
+            app:argType="string"
             app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/slide_out" />
     </fragment>
